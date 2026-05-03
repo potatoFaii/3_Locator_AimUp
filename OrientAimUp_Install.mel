@@ -1,0 +1,85 @@
+global string $gShelfTopLevel;
+string $currentShelf = `tabLayout -query -selectTab $gShelfTopLevel`;
+setParent $currentShelf;
+
+global proc string defineScriptCommand(string $scriptName, string $filePath, string $mayaScriptDir, string $function) {
+    string $command = 
+        "import sys\n" +
+        "\n" +
+        "OrientAimUpPath = \"" + $mayaScriptDir + "\"\n" +
+        "if OrientAimUpPath not in sys.path:\n" +
+        "    sys.path.append(OrientAimUpPath)\n" +
+        "\n" +
+        "try:\n" +
+        "   import " + $filePath + "." + $scriptName + " as " + $scriptName + "\n" +
+        "except ImportError as e:\n" + 
+        "   import traceback\n" +
+        "   print('Failed to import SpaceSwitch modules:\\n'+ traceback.format_exc())\n" +
+        "\n" +
+        "try:\n" +
+        "   from importlib import reload\n" +
+        "except ImportError:\n" +
+        "   pass\n" +
+        "\n" +
+        "def safe_reload(module):\n" +
+        "   try:\n" +
+        "       reload(module)\n" +
+        "   except Exception:\n" +
+        "       try:\n" +
+        "           import imp\n" +
+        "           return imp.reload(module)\n" +
+        "       except Exception:\n" +
+        "           return module\n" +
+        "\n" +
+        "safe_reload(" + $scriptName + ")\n" +
+        "\n" + 
+        "" + $scriptName + "." + $scriptName + "()\n";
+    return $command;
+}
+
+// Define the variables
+$scriptName = "OrientAimUp_UI";
+$filePath = "IndivPyOrientAimUp";
+$scriptLoc = `scriptLoc`;
+$iconExt = "png";
+$icon = $scriptLoc + "/Icon_OrientAimUp/OrientAimUP." + $iconExt;
+$annot = $scriptName + "\n1. Use Script To FUNCTION.\nSelect to see more function.";
+
+// MenuItem variables
+$baseClassFunction = "OrientAimUp_UI()";
+$baseCommand = defineScriptCommand($scriptName, $filePath, $scriptLoc, $baseClassFunction);
+
+shelfButton
+    -annotation $annot
+    -image1 $icon
+    -label $scriptName
+    -sourceType "python"
+    -command $baseCommand
+;
+
+//string $buttons[] = `shelfLayout -q -ca $currentShelf`;
+//int $buttonCount = size($buttons);
+
+
+global proc asInstallScriptLocator (){}
+
+global proc string scriptLoc (){
+    string $whatIs=`whatIs asInstallScriptLocator`;
+    string $fullPath=`substring $whatIs 25 999`;
+    string $buffer[];
+    string $slash="/";
+    if (`gmatch $whatIs "*\\\\*"`){//sourced from ScriptEditor
+        $slash="\\";
+    }
+    int $numTok=`tokenize $fullPath $slash $buffer`;
+    int $numLetters=size($fullPath);
+    int $numLettersLastFolder=size($buffer[$numTok-1]);
+    string $scriptLocation=`substring $fullPath 1 ($numLetters-$numLettersLastFolder)`;
+    return $scriptLocation;
+}
+
+
+global proc string test (){
+    string $check=`substring scriptLoc -6 999`;
+    return $check;
+}
