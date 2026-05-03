@@ -1,6 +1,8 @@
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 ![Autodesk Maya](https://img.shields.io/badge/Autodesk%20Maya-37A5CC?style=for-the-badge)
 
+<img width="306" height="285" alt="UI" src="https://github.com/user-attachments/assets/7f155c60-3f7b-4682-8fc0-427cd2cc6c02" />
+
 # OrientAimUp Tool for Autodesk Maya
 
 ---
